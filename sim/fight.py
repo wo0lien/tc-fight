@@ -10,7 +10,7 @@ class Fight:
     winner: Union[Team, None] = None
     ended = False
 
-    max_tick = 20
+    max_tick = 100
 
     def __init__(self, arena: Arena) -> None:
         self.arena = arena

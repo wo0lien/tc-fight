@@ -41,11 +41,15 @@ class Arena:
             return
         self.drawer.drawArena(self)
 
+    @property
+    def alives(self):
+        return [r for r in self.robots if r.is_alive]
+
     def allies(self, robot: Robot):
-        return [r for r in self.robots if r.team == robot.team and r.id != robot.id]
+        return [r for r in self.alives if r.team == robot.team and r.id != robot.id]
 
     def opponents(self, robot: Robot):
-        return [r for r in self.robots if r.team != robot.team]
+        return [r for r in self.alives if r.team != robot.team]
 
     def spawn_robots(self):
         """Spawns all robots in the arena"""
@@ -58,14 +62,14 @@ class Arena:
             )
 
     def run_robots_intelligence(self):
-        for r in self.robots:
+        for r in self.alives:
             try:
                 r.proxy.nextaction = r.proxy.intelligence()
             except:
                 print("User algo failed")
 
     def verify_robots_action(self):
-        for r in self.robots:
+        for r in self.alives:
             r.get_next_action().valid = self.verify_action(r)
 
     def verify_action(self, robot: Robot):
@@ -82,7 +86,7 @@ class Arena:
                 raise ValueError
 
     def apply_robot_action(self):
-        for r in self.robots:
+        for r in self.alives:
             action = r.get_next_action()
             if action.valid is not True:
                 continue
@@ -101,7 +105,7 @@ class Arena:
                     raise ValueError
 
     def next_tick(self):
-        for robot in self.robots:
+        for robot in self.alives:
             # calculate surroundings
             surroundings = [
                 (r.id, r.position)
@@ -109,14 +113,6 @@ class Arena:
                 if r.in_range(robot.position)
             ]
             robot.next_tick(self.allies(robot), surroundings)
-
-    def getOtherRobots(self, r: Robot):
-        """Get all the other robots in the arena"""
-        robots = List.copy(self.robots)
-        for i, ro in enumerate(robots):
-            if ro.id == r.id:
-                robots.pop(i)
-                return robots
 
 
 class ConsoleDrawer(Drawer):
