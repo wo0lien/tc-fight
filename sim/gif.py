@@ -5,6 +5,8 @@ from sim.robot import Team
 
 RED_FILL = (255, 0, 0)
 BLUE_FILL = (0, 0, 255)
+BACKGROUND_FILL = (255, 255, 255)
+BORDERS_FILL = (0, 0, 0)
 
 SCALE_FACTOR = 10
 
@@ -16,10 +18,10 @@ class GifDrawer(Drawer):
         img = Image.new(
             "RGB",
             ((arena.x_size + 2) * SCALE_FACTOR, (arena.y_size + 2) * SCALE_FACTOR),
-            (255, 255, 255),
+            BACKGROUND_FILL,
         )
         draw = ImageDraw.Draw(img)
-        fill = (0, 0, 0)
+        fill = BORDERS_FILL
         # Draw rectangle border on the sides of the arena
         draw.rectangle(
             [
