@@ -1,4 +1,5 @@
-from enum import Enum
+from abc import ABC
+from enum import Enum, auto
 from typing import List, Tuple, Union
 from icecream import ic
 import copy
@@ -37,7 +38,7 @@ class RobotActionName(Enum):
     SHOOT = 3
 
 
-class RobotAction:
+class RobotAction(ABC):
     name: RobotActionName
     valid: bool = None
 
@@ -49,7 +50,6 @@ class RobotAction:
 
 
 class RobotMove(RobotAction):
-
     direction: Direction = None
 
     def __init__(self, dir: Direction) -> None:
@@ -122,6 +122,42 @@ class RobotShoot(RobotAction):
         return False
 
 
+class RobotActionErrors(Enum):
+    NotInRangeError = auto()
+    """The target is not in range"""
+    OutOfBoundsError = auto()
+    """The move leads to an out of bounds position"""
+
+
+class PlayerRobotActionReturn(ABC):
+    name: RobotActionName
+
+    def __init__(self) -> None:
+        pass
+
+
+class PlayerRobotMoveReturn(PlayerRobotActionReturn):
+    name = RobotActionName.MOVE
+    direction: Direction
+
+    def __init__(self, dir: Direction) -> None:
+        self.direction = copy.deepcopy(dir)
+
+
+class PlayerRobotAimReturn(PlayerRobotActionReturn):
+    name = RobotActionName.AIM
+
+    def __init__(self) -> None:
+        super().__init__()
+
+
+class PlayerRobotShootReturn(PlayerRobotActionReturn):
+    name = RobotActionName.SHOOT
+
+    def __init__(self) -> None:
+        super().__init__()
+
+
 class PlayerRobot:
     """Robot proxy"""
 
@@ -155,7 +191,7 @@ class Robot:
 
     range = 3
 
-    id: str = "robot"
+    id: str
     lastAction: RobotAction = None
     nextAction: RobotAction = None
     position: Position
@@ -219,6 +255,7 @@ class Robot:
         if self.nextAction != None:
             return self.nextAction
 
+        # @todo check retun correct list
         name = self.proxy.nextaction[0]
 
         match name:
@@ -233,6 +270,7 @@ class Robot:
                     self.proxy.nextaction[1], self.position, self.range
                 )
             case _:
+                # @todo add NoOpAction
                 raise ValueError
 
         return self.nextAction

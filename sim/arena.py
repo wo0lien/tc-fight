@@ -1,3 +1,4 @@
+from abc import ABC
 from enum import Enum
 from sim.robot import (
     Robot,
@@ -11,20 +12,23 @@ from sim.robot import (
 from typing import List
 
 
-class Drawer:
+class Drawer(ABC):
     def drawArena():
         raise NotImplementedError
+
+    def drawResult(self):
+        pass
 
 
 class Arena:
     # ref at top left
-    x_size = 30
+    x_size = 20
     y_size = 10
 
     nb_robots_per_team = 10
 
-    blue_spawns = [(x, 1) for x in range(10, 20)]
-    red_spawns = [(x, 9) for x in range(10, 20)]
+    blue_spawns = [(x, 1) for x in range(5, 15)]
+    red_spawns = [(x, 9) for x in range(5, 15)]
 
     custom_robot: PlayerRobot = None
 
@@ -40,6 +44,11 @@ class Arena:
         if self.drawer == None:
             return
         self.drawer.drawArena(self)
+
+    def drawResult(self):
+        if self.drawer == None:
+            return
+        self.drawer.drawResult()
 
     @property
     def alives(self):
@@ -113,6 +122,11 @@ class Arena:
                 if r.in_range(robot.position)
             ]
             robot.next_tick(self.allies(robot), surroundings)
+
+
+class NoOpDrawer(Drawer):
+    def drawArena(self, arena: Arena):
+        pass
 
 
 class ConsoleDrawer(Drawer):

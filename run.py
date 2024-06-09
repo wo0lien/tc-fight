@@ -1,7 +1,8 @@
 from sim.fight import Fight
-from sim.arena import Arena, ConsoleDrawer
+from sim.arena import Arena, ConsoleDrawer, NoOpDrawer
 from sim.robot import PlayerRobot, Direction, RobotActionName
 import random
+from sim.gif import GifDrawer
 
 
 # User algo
@@ -18,7 +19,7 @@ class PlayerRobotTom(PlayerRobot):
         return a
 
 
-a = Arena(ConsoleDrawer, PlayerRobotTom)
+a = Arena(GifDrawer, PlayerRobotTom)
 
 fight = Fight(a)
 

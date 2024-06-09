@@ -43,7 +43,6 @@ class Fight:
         current_tick = 0
         self.arena.spawn_robots()
         while self.ended == False and current_tick < self.max_tick:
-            time.sleep(0.1)
             self.arena.draw()
             self.arena.next_tick()
             # run robot intelligence
@@ -57,3 +56,5 @@ class Fight:
                 self.ended = True
 
             current_tick += 1
+        print(self.check_victory())
+        self.arena.drawResult()
